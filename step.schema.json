@@ -107,7 +107,8 @@
       "required": ["name"],
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         },
         "bin_name": {
           "type": "string"
@@ -130,7 +131,8 @@
       "required": ["name"],
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         },
         "bin_name": {
           "type": "string"
@@ -143,19 +145,23 @@
       "required": ["name"],
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         }
       }
     },
     "DependencyModel": {
       "type": "object",
       "additionalProperties": false,
+      "required": ["manager", "name"],
       "properties": {
         "manager": {
-          "type": "string"
+          "type": "string",
+          "enum": ["brew", "_"]
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         }
       }
     },

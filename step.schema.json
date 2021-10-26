@@ -121,7 +121,8 @@
       "required": ["entry_file"],
       "properties": {
         "entry_file": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         }
       }
     },
@@ -195,7 +196,8 @@
       "required": ["package_name"],
       "properties": {
         "package_name": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         }
       }
     },

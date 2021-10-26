@@ -15,6 +15,7 @@
     "opts": {
       "type": "object",
       "additionalProperties": false,
+      "required": ["title"],
       "if": {
         "properties": {
           "is_sensitive": {
@@ -37,7 +38,8 @@
           "type": "boolean"
         },
         "title": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         },
         "description": {
           "type": "string"

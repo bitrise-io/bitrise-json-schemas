@@ -4,10 +4,11 @@
   "description": "Bitrise Step",
   "type": "object",
   "additionalProperties": false,
-  "required": ["title", "summary", "website"],
+  "required": ["title", "summary", "website", "support_url", "source_code_url"],
   "properties": {
     "title": {
-      "type": "string"
+      "type": "string",
+      "minLength": 1
     },
     "summary": {
       "type": "string",
@@ -20,10 +21,12 @@
       "type": "string"
     },
     "source_code_url": {
-      "type": "string"
+      "type": "string",
+      "minLength": 1
     },
     "support_url": {
-      "type": "string"
+      "type": "string",
+      "minLength": 1
     },
     "host_os_tags": {
       "type": "array",

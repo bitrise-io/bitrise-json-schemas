@@ -4,7 +4,13 @@
   "description": "Bitrise Step",
   "type": "object",
   "additionalProperties": false,
-  "required": ["title", "summary", "website", "support_url", "source_code_url"],
+  "required": [
+    "title",
+    "summary",
+    "website",
+    "support_url",
+    "source_code_url"
+  ],
   "if": {
     "properties": {
       "type_tags": {
@@ -13,7 +19,9 @@
         }
       }
     },
-    "required": ["type_tags"]
+    "required": [
+      "type_tags"
+    ]
   },
   "then": {
     "properties": {
@@ -55,7 +63,16 @@
       "uniqueItems": true,
       "items": {
         "type": "string",
-        "enum": ["ios", "macos", "android", "xamarin", "react-native", "cordova", "ionic", "flutter"]
+        "enum": [
+          "ios",
+          "macos",
+          "android",
+          "xamarin",
+          "react-native",
+          "cordova",
+          "ionic",
+          "flutter"
+        ]
       }
     },
     "type_tags": {
@@ -64,7 +81,18 @@
       "uniqueItems": true,
       "items": {
         "type": "string",
-        "enum": ["access-control", "artifact-info", "installer", "deploy", "utility", "dependency", "code-sign", "build", "test", "notification"]
+        "enum": [
+          "access-control",
+          "artifact-info",
+          "installer",
+          "deploy",
+          "utility",
+          "dependency",
+          "code-sign",
+          "build",
+          "test",
+          "notification"
+        ]
       }
     },
     "dependencies": {
@@ -129,7 +157,9 @@
       "maxProperties": 2,
       "minProperties": 1,
       "if": {
-        "required": ["opts"]
+        "required": [
+          "opts"
+        ]
       },
       "then": {
         "minProperties": 2
@@ -137,7 +167,10 @@
       "additionalProperties": false,
       "patternProperties": {
         "^(?!^opts$)[A-Z_]+$": {
-          "type": ["null", "string"]
+          "type": [
+            "null",
+            "string"
+          ]
         },
         "opts": {
           "$ref": "#/definitions/EnvVarOpts"
@@ -151,7 +184,9 @@
       "allOf": [
         {
           "if": {
-            "required": ["opts"]
+            "required": [
+              "opts"
+            ]
           },
           "then": {
             "minProperties": 2
@@ -161,7 +196,9 @@
           "if": {
             "properties": {
               "opts": {
-                "required": ["value_options"]
+                "required": [
+                  "value_options"
+                ]
               }
             }
           },
@@ -181,7 +218,10 @@
       "additionalProperties": false,
       "patternProperties": {
         "^(?!^opts$)[a-z_]+$": {
-          "type": ["null", "string"]
+          "type": [
+            "null",
+            "string"
+          ]
         },
         "opts": {
           "$ref": "#/definitions/EnvVarOpts"
@@ -191,14 +231,18 @@
     "EnvVarOpts": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["title"],
+      "required": [
+        "title"
+      ],
       "if": {
         "properties": {
           "is_sensitive": {
             "const": true
           }
         },
-        "required": ["is_sensitive"]
+        "required": [
+          "is_sensitive"
+        ]
       },
       "then": {
         "properties": {
@@ -257,23 +301,31 @@
     "AptGetDepModel": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["name"],
+      "required": [
+        "name"
+      ],
       "properties": {
         "name": {
           "type": "string",
           "minLength": 1,
-          "not": {"const":"go"}
+          "not": {
+            "const": "go"
+          }
         },
         "bin_name": {
           "type": "string",
-          "not": {"const":"go"}
+          "not": {
+            "const": "go"
+          }
         }
       }
     },
     "BashStepToolkitModel": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["entry_file"],
+      "required": [
+        "entry_file"
+      ],
       "properties": {
         "entry_file": {
           "type": "string",
@@ -284,44 +336,62 @@
     "BrewDepModel": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["name"],
+      "required": [
+        "name"
+      ],
       "properties": {
         "name": {
           "type": "string",
           "minLength": 1,
-          "not": {"const":"go"}
+          "not": {
+            "const": "go"
+          }
         },
         "bin_name": {
           "type": "string",
-          "not": {"const":"go"}
+          "not": {
+            "const": "go"
+          }
         }
       }
     },
     "CheckOnlyDepModel": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["name"],
+      "required": [
+        "name"
+      ],
       "properties": {
         "name": {
           "type": "string",
           "minLength": 1,
-          "not": {"const":"go"}
+          "not": {
+            "const": "go"
+          }
         }
       }
     },
     "DependencyModel": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["manager", "name"],
+      "required": [
+        "manager",
+        "name"
+      ],
       "properties": {
         "manager": {
           "type": "string",
-          "enum": ["brew", "_"]
+          "enum": [
+            "brew",
+            "_"
+          ]
         },
         "name": {
           "type": "string",
           "minLength": 1,
-          "not": {"const":"go"}
+          "not": {
+            "const": "go"
+          }
         }
       }
     },
@@ -352,7 +422,9 @@
     "GoStepToolkitModel": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["package_name"],
+      "required": [
+        "package_name"
+      ],
       "properties": {
         "package_name": {
           "type": "string",

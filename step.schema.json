@@ -5,6 +5,23 @@
   "type": "object",
   "additionalProperties": false,
   "required": ["title", "summary", "website", "support_url", "source_code_url"],
+  "if": {
+    "properties": {
+      "type_tags": {
+        "contains": {
+          "const": "notification"
+        }
+      }
+    },
+    "required": ["type_tags"]
+  },
+  "then": {
+    "properties": {
+      "is_always_run": {
+        "const": true
+      }
+    }
+  },
   "properties": {
     "title": {
       "type": "string",

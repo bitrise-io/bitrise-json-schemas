@@ -18,15 +18,13 @@
       "type": "string"
     },
     "website": {
-      "type": "string"
+      "$ref": "#/definitions/URL"
     },
     "source_code_url": {
-      "type": "string",
-      "minLength": 1
+      "$ref": "#/definitions/URL"
     },
     "support_url": {
-      "type": "string",
-      "minLength": 1
+      "$ref": "#/definitions/URL"
     },
     "host_os_tags": {
       "type": "array",
@@ -104,6 +102,11 @@
     }
   },
   "definitions": {
+    "URL": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https?://"
+    },
     "AptGetDepModel": {
       "type": "object",
       "additionalProperties": false,

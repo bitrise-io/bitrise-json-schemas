@@ -1,222 +1,214 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "$ref": "#/definitions/StepModel",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Step",
+  "description": "Bitrise Step",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["title", "summary", "website", "support_url", "source_code_url"],
+  "properties": {
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "summary": {
+      "type": "string",
+      "pattern": "^.{1,100}$"
+    },
+    "description": {
+      "type": "string"
+    },
+    "website": {
+      "type": "string"
+    },
+    "source_code_url": {
+      "type": "string",
+      "minLength": 1
+    },
+    "support_url": {
+      "type": "string",
+      "minLength": 1
+    },
+    "host_os_tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "project_type_tags": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": ["ios", "macos", "android", "xamarin", "react-native", "cordova", "ionic", "flutter"]
+      }
+    },
+    "type_tags": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": ["access-control", "artifact-info", "installer", "deploy", "utility", "dependency", "code-sign", "build", "test", "notification"]
+      }
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/DependencyModel"
+      }
+    },
+    "toolkit": {
+      "$ref": "#/definitions/StepToolkitModel"
+    },
+    "deps": {
+      "$ref": "#/definitions/DepsModel"
+    },
+    "is_requires_admin_user": {
+      "type": "boolean"
+    },
+    "is_always_run": {
+      "type": "boolean"
+    },
+    "is_skippable": {
+      "type": "boolean"
+    },
+    "run_if": {
+      "type": "string"
+    },
+    "timeout": {
+      "type": "integer",
+      "exclusiveMinimum": 0
+    },
+    "meta": {
+      "type": "object",
+      "patternProperties": {
+        ".*": {
+          "additionalProperties": true
+        }
+      }
+    },
+    "inputs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "env_var.schema.json"
+      }
+    },
+    "outputs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "env_var.schema.json"
+      }
+    }
+  },
   "definitions": {
     "AptGetDepModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         },
         "bin_name": {
           "type": "string"
         }
-      },
-      "additionalProperties": false,
-      "type": "object"
+      }
     },
     "BashStepToolkitModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entry_file"],
       "properties": {
         "entry_file": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         }
-      },
-      "additionalProperties": false,
-      "type": "object"
+      }
     },
     "BrewDepModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         },
         "bin_name": {
           "type": "string"
         }
-      },
-      "additionalProperties": false,
-      "type": "object"
+      }
     },
     "CheckOnlyDepModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         }
-      },
-      "additionalProperties": false,
-      "type": "object"
+      }
     },
     "DependencyModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manager", "name"],
       "properties": {
         "manager": {
-          "type": "string"
+          "type": "string",
+          "enum": ["brew", "_"]
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         }
-      },
-      "additionalProperties": false,
-      "type": "object"
+      }
     },
     "DepsModel": {
+      "type": "object",
+      "additionalProperties": false,
       "properties": {
         "brew": {
+          "type": "array",
           "items": {
             "$ref": "#/definitions/BrewDepModel"
-          },
-          "type": "array"
+          }
         },
         "apt_get": {
+          "type": "array",
           "items": {
             "$ref": "#/definitions/AptGetDepModel"
-          },
-          "type": "array"
+          }
         },
         "check_only": {
+          "type": "array",
           "items": {
             "$ref": "#/definitions/CheckOnlyDepModel"
-          },
-          "type": "array"
+          }
         }
-      },
-      "additionalProperties": false,
-      "type": "object"
+      }
     },
     "GoStepToolkitModel": {
+      "type": "object",
+      "additionalProperties": false,
       "required": ["package_name"],
       "properties": {
         "package_name": {
-          "type": "string"
-        }
-      },
-      "additionalProperties": false,
-      "type": "object"
-    },
-    "StepModel": {
-      "properties": {
-        "title": {
-          "type": "string"
-        },
-        "summary": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "website": {
-          "type": "string"
-        },
-        "source_code_url": {
-          "type": "string"
-        },
-        "support_url": {
-          "type": "string"
-        },
-        "published_at": {
           "type": "string",
-          "format": "date-time"
-        },
-        "source": {
-          "$ref": "#/definitions/StepSourceModel"
-        },
-        "asset_urls": {
-          "patternProperties": {
-            ".*": {
-              "type": "string"
-            }
-          },
-          "type": "object"
-        },
-        "host_os_tags": {
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        },
-        "project_type_tags": {
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        },
-        "type_tags": {
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        },
-        "dependencies": {
-          "items": {
-            "$ref": "#/definitions/DependencyModel"
-          },
-          "type": "array"
-        },
-        "toolkit": {
-          "$ref": "#/definitions/StepToolkitModel"
-        },
-        "deps": {
-          "$ref": "#/definitions/DepsModel"
-        },
-        "is_requires_admin_user": {
-          "type": "boolean"
-        },
-        "is_always_run": {
-          "type": "boolean"
-        },
-        "is_skippable": {
-          "type": "boolean"
-        },
-        "run_if": {
-          "type": "string"
-        },
-        "timeout": {
-          "type": "integer"
-        },
-        "meta": {
-          "patternProperties": {
-            ".*": {
-              "additionalProperties": true
-            }
-          },
-          "type": "object"
-        },
-        "inputs": {
-          "items": {
-            "patternProperties": {
-              ".*": {
-                "additionalProperties": true
-              }
-            },
-            "type": "object"
-          },
-          "type": "array"
-        },
-        "outputs": {
-          "items": {
-            "patternProperties": {
-              ".*": {
-                "additionalProperties": true
-              }
-            },
-            "type": "object"
-          },
-          "type": "array"
+          "minLength": 1
         }
-      },
-      "additionalProperties": false,
-      "type": "object"
-    },
-    "StepSourceModel": {
-      "properties": {
-        "git": {
-          "type": "string"
-        },
-        "commit": {
-          "type": "string"
-        }
-      },
-      "additionalProperties": false,
-      "type": "object"
+      }
     },
     "StepToolkitModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "maxProperties": 1,
       "properties": {
         "bash": {
           "$ref": "#/definitions/BashStepToolkitModel"
@@ -224,9 +216,7 @@
         "go": {
           "$ref": "#/definitions/GoStepToolkitModel"
         }
-      },
-      "additionalProperties": false,
-      "type": "object"
+      }
     }
   }
 }

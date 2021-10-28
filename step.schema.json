@@ -114,10 +114,12 @@
       "properties": {
         "name": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "not": {"const":"go"}
         },
         "bin_name": {
-          "type": "string"
+          "type": "string",
+          "not": {"const":"go"}
         }
       }
     },
@@ -139,10 +141,12 @@
       "properties": {
         "name": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "not": {"const":"go"}
         },
         "bin_name": {
-          "type": "string"
+          "type": "string",
+          "not": {"const":"go"}
         }
       }
     },
@@ -153,7 +157,8 @@
       "properties": {
         "name": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "not": {"const":"go"}
         }
       }
     },
@@ -168,7 +173,8 @@
         },
         "name": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "not": {"const":"go"}
         }
       }
     },

@@ -137,10 +137,7 @@
       "additionalProperties": false,
       "patternProperties": {
         "^(?!^opts$)[A-Z_]+$": {
-          "type": [
-            "null",
-            "string"
-          ]
+          "type": ["null", "string"]
         },
         "opts": {
           "$ref": "#/definitions/EnvVarOpts"
@@ -151,19 +148,40 @@
       "type": "object",
       "maxProperties": 2,
       "minProperties": 1,
-      "if": {
-        "required": ["opts"]
-      },
-      "then": {
-        "minProperties": 2
-      },
+      "allOf": [
+        {
+          "if": {
+            "required": ["opts"]
+          },
+          "then": {
+            "minProperties": 2
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "opts": {
+                "required": ["value_options"]
+              }
+            }
+          },
+          "then": {
+            "patternProperties": {
+              "^(?!^opts$)[a-z_]+$": {
+                "type": "string",
+                "minLength": 1
+              },
+              "opts": {
+                "$ref": "#/definitions/EnvVarOpts"
+              }
+            }
+          }
+        }
+      ],
       "additionalProperties": false,
       "patternProperties": {
         "^(?!^opts$)[a-z_]+$": {
-          "type": [
-            "null",
-            "string"
-          ]
+          "type": ["null", "string"]
         },
         "opts": {
           "$ref": "#/definitions/EnvVarOpts"

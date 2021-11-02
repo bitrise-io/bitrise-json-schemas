@@ -1,14 +1,32 @@
 package schemas_test
 
 import (
-	"fmt"
-	"strings"
 	"testing"
 
 	schemas "github.com/bitrise-io/bitrise-json-schemas"
-	"github.com/santhosh-tekuri/jsonschema/v3"
-	"gopkg.in/yaml.v2"
 )
+
+func TestStepSchema(t *testing.T) {
+	for _, tt := range tests {
+		validator, err := schemas.NewJSONSchemaValidator(schemas.StepSchema)
+		if err != nil {
+			t.Fatalf("unexpected schema compile error: %v", err)
+		}
+
+		t.Run(tt.name, func(t *testing.T) {
+			gotErr := validator.Validate(tt.stepYML)
+			if tt.wantErr == "" && gotErr != nil {
+				t.Errorf("unexpected error: %v", gotErr)
+			}
+			if tt.wantErr != "" && gotErr == nil {
+				t.Errorf("expected error: %s, got nil", tt.wantErr)
+			}
+			if tt.wantErr != "" && gotErr != nil && gotErr.Error() != tt.wantErr {
+				t.Errorf("expected error: %s, got: %s", tt.wantErr, gotErr)
+			}
+		})
+	}
+}
 
 var tests = []struct {
 	name    string
@@ -396,91 +414,4 @@ inputs:
 `,
 		wantErr: `I[#/inputs/0] S[#/properties/inputs/items/$ref] doesn't validate with "#/definitions/InputEnvVar"`,
 	},
-}
-
-func TestStepSchema(t *testing.T) {
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			gotErr := validate(tt.stepYML, schemas.StepSchema)
-			if tt.wantErr == "" && gotErr != nil {
-				t.Errorf("unexpected error: %v", gotErr)
-			}
-			if tt.wantErr != "" && gotErr == nil {
-				t.Errorf("expected error: %s, got nil", tt.wantErr)
-			}
-			if tt.wantErr != "" && gotErr != nil && gotErr.Error() != tt.wantErr {
-				t.Errorf("expected error: %s, got: %s", tt.wantErr, gotErr)
-			}
-		})
-	}
-}
-
-func validate(stepYML, schemaStr string) error {
-	var m interface{}
-	err := yaml.Unmarshal([]byte(stepYML), &m)
-	if err != nil {
-		return err
-	}
-	m, err = recursiveJSONMarshallable(m)
-	if err != nil {
-		return err
-	}
-	compiler := jsonschema.NewCompiler()
-	if err := compiler.AddResource("schema.json", strings.NewReader(schemaStr)); err != nil {
-		return err
-	}
-	schema, err := compiler.Compile("schema.json")
-	if err != nil {
-		return err
-	}
-	if err := schema.ValidateInterface(m); err != nil {
-		return err
-	}
-	fmt.Println("validation successfull")
-	return nil
-}
-
-func recursiveJSONMarshallable(source interface{}) (interface{}, error) {
-	if array, ok := source.([]interface{}); ok {
-		var convertedArray []interface{}
-		for _, element := range array {
-			convertedValue, err := recursiveJSONMarshallable(element)
-			if err != nil {
-				return nil, err
-			}
-			convertedArray = append(convertedArray, convertedValue)
-		}
-		return convertedArray, nil
-	}
-
-	if interfaceToInterfaceMap, ok := source.(map[interface{}]interface{}); ok {
-		target := map[string]interface{}{}
-		for key, value := range interfaceToInterfaceMap {
-			strKey, ok := key.(string)
-			if !ok {
-				return nil, fmt.Errorf("failed to convert map key from type interface{} to string")
-			}
-
-			convertedValue, err := recursiveJSONMarshallable(value)
-			if err != nil {
-				return nil, err
-			}
-			target[strKey] = convertedValue
-		}
-		return target, nil
-	}
-
-	if stringToInterfaceMap, ok := source.(map[string]interface{}); ok {
-		target := map[string]interface{}{}
-		for key, value := range stringToInterfaceMap {
-			convertedValue, err := recursiveJSONMarshallable(value)
-			if err != nil {
-				return nil, err
-			}
-			target[key] = convertedValue
-		}
-		return target, nil
-	}
-
-	return source, nil
 }

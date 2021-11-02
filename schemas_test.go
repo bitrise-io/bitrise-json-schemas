@@ -10,10 +10,12 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-var passingTests = []struct {
+var tests = []struct {
 	name    string
 	stepYML string
+	wantErr string
 }{
+	// Passing test cases
 	{
 		name: "Minimal valid step",
 		stepYML: `
@@ -32,13 +34,7 @@ outputs:
     title: Runner binary
 `,
 	},
-}
-
-var failingTests = []struct {
-	name    string
-	stepYML string
-	wantErr string
-}{
+	// Failing test cases - bitrise run
 	{
 		name: "deps name can not be empty",
 		stepYML: `
@@ -233,16 +229,7 @@ outputs:
 }
 
 func TestStepSchema(t *testing.T) {
-	for _, tt := range passingTests {
-		t.Run(tt.name, func(t *testing.T) {
-			gotErr := validate(tt.stepYML, schemas.StepSchema)
-			if gotErr != nil {
-				t.Errorf("unexpected error: %v", gotErr)
-			}
-		})
-	}
-
-	for _, tt := range failingTests {
+	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			gotErr := validate(tt.stepYML, schemas.StepSchema)
 			if tt.wantErr == "" && gotErr != nil {

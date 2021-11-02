@@ -201,6 +201,9 @@
         },
         {
           "if": {
+            "required": [
+              "opts"
+            ],
             "properties": {
               "opts": {
                 "required": [

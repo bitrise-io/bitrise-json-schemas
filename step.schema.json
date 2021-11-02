@@ -24,6 +24,14 @@
     ]
   },
   "then": {
+    "required": [
+      "title",
+      "summary",
+      "website",
+      "support_url",
+      "source_code_url",
+      "is_always_run"
+    ],
     "properties": {
       "is_always_run": {
         "const": true

@@ -122,6 +122,39 @@ support_url: https://github.com/bitrise-io/steps-script/issues
 		wantErr: `I[#/source_code_url] S[#/properties/source_code_url/$ref] doesn't validate with "#/definitions/URL"`,
 	},
 	{
+		name: "website url is in http format",
+		stepYML: `
+title: Script
+summary: Run any custom script you want. The power is in your hands. Use it wisely!
+website: git@github.com:bitrise-steplib/steps-script.git
+source_code_url: https://github.com/bitrise-io/steps-script
+support_url: https://github.com/bitrise-io/steps-script/issues
+`,
+		wantErr: `I[#/website] S[#/properties/website/$ref] doesn't validate with "#/definitions/URL"`,
+	},
+	{
+		name: "source code url is in http format",
+		stepYML: `
+title: Script
+summary: Run any custom script you want. The power is in your hands. Use it wisely!
+website: https://github.com/bitrise-io/steps-script
+source_code_url: git@github.com:bitrise-steplib/steps-script.git
+support_url: https://github.com/bitrise-io/steps-script/issues
+`,
+		wantErr: `I[#/source_code_url] S[#/properties/source_code_url/$ref] doesn't validate with "#/definitions/URL"`,
+	},
+	{
+		name: "support url is in http format",
+		stepYML: `
+title: Script
+summary: Run any custom script you want. The power is in your hands. Use it wisely!
+website: https://github.com/bitrise-io/steps-script
+source_code_url: https://github.com/bitrise-io/steps-script
+support_url: git@github.com:bitrise-steplib/steps-script.git
+`,
+		wantErr: `I[#/support_url] S[#/properties/support_url/$ref] doesn't validate with "#/definitions/URL"`,
+	},
+	{
 		name: "unsupported type tag",
 		stepYML: `
 title: Script
@@ -134,6 +167,20 @@ type_tags:
 - invalid
 `,
 		wantErr: `I[#/type_tags/1] S[#/properties/type_tags/items/enum] value must be one of "access-control", "artifact-info", "installer", "deploy", "utility", "dependency", "code-sign", "build", "test", "notification"`,
+	},
+	{
+		name: "is always run is set if notification type tag",
+		stepYML: `
+title: Script
+summary: Run any custom script you want. The power is in your hands. Use it wisely!
+website: https://github.com/bitrise-io/steps-script
+source_code_url: https://github.com/bitrise-io/steps-script
+support_url: https://github.com/bitrise-io/steps-script/issues
+is_always_run: false
+type_tags:
+- notification
+`,
+		wantErr: `I[#] S[#/then] if-then failed`,
 	},
 	{
 		name: "unsupported project type tag",
@@ -176,6 +223,20 @@ deps:
 		wantErr: `I[#/deps] S[#/properties/deps/$ref] doesn't validate with "#/definitions/DepsModel"`,
 	},
 	{
+		name: "go is not listed as deps",
+		stepYML: `
+title: Script
+summary: Run any custom script you want. The power is in your hands. Use it wisely!
+website: https://github.com/bitrise-io/steps-script
+source_code_url: https://github.com/bitrise-io/steps-script
+support_url: https://github.com/bitrise-io/steps-script/issues
+deps:
+  brew:
+  - name: go
+`,
+		wantErr: `I[#/deps] S[#/properties/deps/$ref] doesn't validate with "#/definitions/DepsModel"`,
+	},
+	{
 		name: "dependencies name can not be empty",
 		stepYML: `
 title: Script
@@ -206,6 +267,37 @@ dependencies:
   name: zip
 `,
 		wantErr: `I[#/dependencies/2] S[#/properties/dependencies/items/$ref] doesn't validate with "#/definitions/DependencyModel"`,
+	},
+	{
+		name: "go is not listed as dependencies",
+		stepYML: `
+title: Script
+summary: Run any custom script you want. The power is in your hands. Use it wisely!
+website: https://github.com/bitrise-io/steps-script
+source_code_url: https://github.com/bitrise-io/steps-script
+support_url: https://github.com/bitrise-io/steps-script/issues
+dependencies:
+- manager: brew
+  name: go
+`,
+		wantErr: `I[#/dependencies/0] S[#/properties/dependencies/items/$ref] doesn't validate with "#/definitions/DependencyModel"`,
+	},
+	{
+		name: "toolkit is either bas, go or undefined",
+		stepYML: `
+title: Script
+summary: Run any custom script you want. The power is in your hands. Use it wisely!
+website: https://github.com/bitrise-io/steps-script
+source_code_url: https://github.com/bitrise-io/steps-script
+support_url: https://github.com/bitrise-io/steps-script/issues
+toolkit:
+  go:
+    package_name: github.com/bitrise-io/steps-script
+  bash:
+    entry_file: step.sh
+
+`,
+		wantErr: `I[#/toolkit] S[#/properties/toolkit/$ref] doesn't validate with "#/definitions/StepToolkitModel"`,
 	},
 	{
 		name: "go toolkit package name is not empty",

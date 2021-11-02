@@ -26,6 +26,20 @@ source_code_url: https://github.com/bitrise-io/steps-script
 support_url: https://github.com/bitrise-io/steps-script/issues
 `,
 	},
+	{
+		name: "Minimal valid step with inputs",
+		stepYML: `
+title: Script
+summary: Run any custom script you want. The power is in your hands. Use it wisely!
+website: https://github.com/bitrise-io/steps-script
+source_code_url: https://github.com/bitrise-io/steps-script
+support_url: https://github.com/bitrise-io/steps-script/issues
+inputs:
+- content: ""
+  opts:
+    title: Script content
+`,
+	},
 	// Failing test cases
 	{
 		name: "title is not empty",
@@ -220,6 +234,75 @@ toolkit:
     entry_file:
 `,
 		wantErr: `I[#/toolkit] S[#/properties/toolkit/$ref] doesn't validate with "#/definitions/StepToolkitModel"`,
+	},
+	// Input tests
+	{
+		name: "input title is required",
+		stepYML: `
+title: Script
+summary: Run any custom script you want. The power is in your hands. Use it wisely!
+website: https://github.com/bitrise-io/steps-script
+source_code_url: https://github.com/bitrise-io/steps-script
+support_url: https://github.com/bitrise-io/steps-script/issues
+inputs:
+- content: ""
+  opts:
+    title: 
+`,
+		wantErr: `I[#/inputs/0] S[#/properties/inputs/items/$ref] doesn't validate with "#/definitions/InputEnvVar"`,
+	},
+	{
+		name: "is expand is set if is sensitive is set",
+		stepYML: `
+title: Script
+summary: Run any custom script you want. The power is in your hands. Use it wisely!
+website: https://github.com/bitrise-io/steps-script
+source_code_url: https://github.com/bitrise-io/steps-script
+support_url: https://github.com/bitrise-io/steps-script/issues
+inputs:
+- content: ""
+  opts:
+    title: Script content
+    is_sensitive: true
+    is_expand: false
+`,
+		wantErr: `I[#/inputs/0] S[#/properties/inputs/items/$ref] doesn't validate with "#/definitions/InputEnvVar"`,
+	},
+	{
+		name: "input has default value is value options defined",
+		stepYML: `
+title: Script
+summary: Run any custom script you want. The power is in your hands. Use it wisely!
+website: https://github.com/bitrise-io/steps-script
+source_code_url: https://github.com/bitrise-io/steps-script
+support_url: https://github.com/bitrise-io/steps-script/issues
+inputs:
+- content: 
+  opts:
+    title: Script content
+    value_options:
+    - "yes"
+    - "no"
+`,
+		wantErr: `I[#/inputs/0] S[#/properties/inputs/items/$ref] doesn't validate with "#/definitions/InputEnvVar"`,
+	},
+	{
+		name: "input value option elements are strings",
+		stepYML: `
+title: Script
+summary: Run any custom script you want. The power is in your hands. Use it wisely!
+website: https://github.com/bitrise-io/steps-script
+source_code_url: https://github.com/bitrise-io/steps-script
+support_url: https://github.com/bitrise-io/steps-script/issues
+inputs:
+- content: "true"
+  opts:
+    title: Script content
+    value_options:
+    - true
+    - false
+`,
+		wantErr: `I[#/inputs/0] S[#/properties/inputs/items/$ref] doesn't validate with "#/definitions/InputEnvVar"`,
 	},
 }
 

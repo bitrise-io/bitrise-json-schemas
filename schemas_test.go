@@ -313,6 +313,31 @@ toolkit:
 `,
 		wantErr: `I[#/toolkit] S[#/properties/toolkit/$ref] doesn't validate with "#/definitions/StepToolkitModel"`,
 	},
+	{
+		name: "deprecated host os tags property is not allowed",
+		stepYML: `
+title: Script
+summary: Run any custom script you want. The power is in your hands. Use it wisely!
+website: https://github.com/bitrise-io/steps-script
+source_code_url: https://github.com/bitrise-io/steps-script
+support_url: https://github.com/bitrise-io/steps-script/issues
+host_os_tags:
+- linux-docker-android-20.04
+`,
+		wantErr: `I[#] S[#/additionalProperties] additionalProperties "host_os_tags" not allowed`,
+	},
+	{
+		name: "deprecated is requires admin user property is not allowed",
+		stepYML: `
+title: Script
+summary: Run any custom script you want. The power is in your hands. Use it wisely!
+website: https://github.com/bitrise-io/steps-script
+source_code_url: https://github.com/bitrise-io/steps-script
+support_url: https://github.com/bitrise-io/steps-script/issues
+is_requires_admin_user: true
+`,
+		wantErr: `I[#] S[#/additionalProperties] additionalProperties "is_requires_admin_user" not allowed`,
+	},
 	// Input tests
 	{
 		name: "input title is required",

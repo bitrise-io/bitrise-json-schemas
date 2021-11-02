@@ -59,12 +59,6 @@
     "support_url": {
       "$ref": "#/definitions/URL"
     },
-    "host_os_tags": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
     "project_type_tags": {
       "type": "array",
       "minItems": 1,
@@ -108,9 +102,6 @@
     },
     "deps": {
       "$ref": "#/definitions/DepsModel"
-    },
-    "is_requires_admin_user": {
-      "type": "boolean"
     },
     "is_always_run": {
       "type": "boolean"

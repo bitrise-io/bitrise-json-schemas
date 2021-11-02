@@ -226,7 +226,8 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "title"
+        "title",
+        "summary"
       ],
       "if": {
         "properties": {
@@ -260,7 +261,8 @@
           "type": "string"
         },
         "summary": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         },
         "category": {
           "type": "string"

@@ -56,6 +56,7 @@ inputs:
 - content: ""
   opts:
     title: Script content
+    summary: Type your script here.
 `,
 	},
 	// Failing test cases

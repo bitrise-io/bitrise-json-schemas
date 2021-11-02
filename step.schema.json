@@ -164,14 +164,13 @@
       "then": {
         "minProperties": 2
       },
-      "additionalProperties": false,
+      "additionalProperties": {
+        "type": [
+          "null",
+          "string"
+        ]
+      },
       "patternProperties": {
-        "^(?!^opts$)[A-Z_]+$": {
-          "type": [
-            "null",
-            "string"
-          ]
-        },
         "opts": {
           "$ref": "#/definitions/EnvVarOpts"
         }
@@ -203,11 +202,11 @@
             }
           },
           "then": {
-            "patternProperties": {
-              "^(?!^opts$)[a-z_]+$": {
+            "additionalProperties": {
                 "type": "string",
                 "minLength": 1
-              },
+            },
+            "patternProperties": {
               "opts": {
                 "$ref": "#/definitions/EnvVarOpts"
               }
@@ -215,14 +214,13 @@
           }
         }
       ],
-      "additionalProperties": false,
+      "additionalProperties": {
+        "type": [
+          "null",
+          "string"
+        ]
+      },
       "patternProperties": {
-        "^(?!^opts$)[a-z_]+$": {
-          "type": [
-            "null",
-            "string"
-          ]
-        },
         "opts": {
           "$ref": "#/definitions/EnvVarOpts"
         }

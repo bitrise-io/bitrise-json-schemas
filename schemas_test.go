@@ -255,21 +255,7 @@ deps:
 		wantErr: `I[#/deps] S[#/properties/deps/$ref] doesn't validate with "#/definitions/DepsModel"`,
 	},
 	{
-		name: "dependencies name can not be empty",
-		stepYML: `
-title: Script
-summary: Run any custom script you want. The power is in your hands. Use it wisely!
-website: https://github.com/bitrise-io/steps-script
-source_code_url: https://github.com/bitrise-io/steps-script
-support_url: https://github.com/bitrise-io/steps-script/issues
-dependencies:
-- manager: brew
-  name:
-`,
-		wantErr: `I[#/dependencies/0] S[#/properties/dependencies/items/$ref] doesn't validate with "#/definitions/DependencyModel"`,
-	},
-	{
-		name: "dependencies manager is either brew or _",
+		name: "deprecated dependencies property is not allowed",
 		stepYML: `
 title: Script
 summary: Run any custom script you want. The power is in your hands. Use it wisely!
@@ -279,26 +265,8 @@ support_url: https://github.com/bitrise-io/steps-script/issues
 dependencies:
 - manager: brew
   name: tee
-- manager: _
-  name: xcode
-- manager: aptget
-  name: zip
 `,
-		wantErr: `I[#/dependencies/2] S[#/properties/dependencies/items/$ref] doesn't validate with "#/definitions/DependencyModel"`,
-	},
-	{
-		name: "go is not listed as dependencies",
-		stepYML: `
-title: Script
-summary: Run any custom script you want. The power is in your hands. Use it wisely!
-website: https://github.com/bitrise-io/steps-script
-source_code_url: https://github.com/bitrise-io/steps-script
-support_url: https://github.com/bitrise-io/steps-script/issues
-dependencies:
-- manager: brew
-  name: go
-`,
-		wantErr: `I[#/dependencies/0] S[#/properties/dependencies/items/$ref] doesn't validate with "#/definitions/DependencyModel"`,
+		wantErr: `I[#] S[#/additionalProperties] additionalProperties "dependencies" not allowed`,
 	},
 	{
 		name: "toolkit is either bas, go or undefined",

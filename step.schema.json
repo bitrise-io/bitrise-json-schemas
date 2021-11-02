@@ -103,12 +103,6 @@
         ]
       }
     },
-    "dependencies": {
-      "type": "array",
-      "items": {
-        "$ref": "#/definitions/DependencyModel"
-      }
-    },
     "toolkit": {
       "$ref": "#/definitions/StepToolkitModel"
     },
@@ -371,30 +365,6 @@
         "name"
       ],
       "properties": {
-        "name": {
-          "type": "string",
-          "minLength": 1,
-          "not": {
-            "const": "go"
-          }
-        }
-      }
-    },
-    "DependencyModel": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "manager",
-        "name"
-      ],
-      "properties": {
-        "manager": {
-          "type": "string",
-          "enum": [
-            "brew",
-            "_"
-          ]
-        },
         "name": {
           "type": "string",
           "minLength": 1,

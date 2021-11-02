@@ -24,17 +24,129 @@ summary: Run any custom script you want. The power is in your hands. Use it wise
 website: https://github.com/bitrise-io/steps-script
 source_code_url: https://github.com/bitrise-io/steps-script
 support_url: https://github.com/bitrise-io/steps-script/issues
-inputs:
-- content: ""
-  opts:
-    title: "Script content"
-outputs:
-- RUNNER_BIN: value
-  opts:
-    title: Runner binary
 `,
 	},
-	// Failing test cases - bitrise run
+	// Failing test cases
+	{
+		name: "title is not empty",
+		stepYML: `
+title: 
+summary: Run any custom script you want. The power is in your hands. Use it wisely!
+website: https://github.com/bitrise-io/steps-script
+source_code_url: https://github.com/bitrise-io/steps-script
+support_url: https://github.com/bitrise-io/steps-script/issues
+`,
+		wantErr: `I[#/title] S[#/properties/title/type] expected string, but got null`,
+	},
+	{
+		name: "summary is not empty",
+		stepYML: `
+title: Script
+summary: 
+website: https://github.com/bitrise-io/steps-script
+source_code_url: https://github.com/bitrise-io/steps-script
+support_url: https://github.com/bitrise-io/steps-script/issues
+`,
+		wantErr: `I[#/summary] S[#/properties/summary/type] expected string, but got null`,
+	},
+	{
+		name: "summary is a single line text",
+		stepYML: `
+title: Script
+summary: |-
+  Run any custom script you want.  
+  The power is in your hands.  
+  Use it wisely!  
+website: https://github.com/bitrise-io/steps-script
+source_code_url: https://github.com/bitrise-io/steps-script
+support_url: https://github.com/bitrise-io/steps-script/issues
+`,
+		wantErr: `I[#/summary] S[#/properties/summary/pattern] does not match pattern "^.{1,100}$"`,
+	},
+	{
+		name: "summary has 100 chars at max",
+		stepYML: `
+title: Script
+summary: Run any custom script you want. The power is in your hands. Use it wisely! Too long line! Too long line!
+website: https://github.com/bitrise-io/steps-script
+source_code_url: https://github.com/bitrise-io/steps-script
+support_url: https://github.com/bitrise-io/steps-script/issues
+`,
+		wantErr: `I[#/summary] S[#/properties/summary/pattern] does not match pattern "^.{1,100}$"`,
+	},
+	{
+		name: "website is not empty",
+		stepYML: `
+title: Script
+summary: Run any custom script you want. The power is in your hands. Use it wisely!
+website: 
+source_code_url: https://github.com/bitrise-io/steps-script
+support_url: https://github.com/bitrise-io/steps-script/issues
+`,
+		wantErr: `I[#/website] S[#/properties/website/$ref] doesn't validate with "#/definitions/URL"`,
+	},
+	{
+		name: "support url is not empty",
+		stepYML: `
+title: Script
+summary: Run any custom script you want. The power is in your hands. Use it wisely!
+website: https://github.com/bitrise-io/steps-script
+source_code_url: https://github.com/bitrise-io/steps-script
+support_url:
+`,
+		wantErr: `I[#/support_url] S[#/properties/support_url/$ref] doesn't validate with "#/definitions/URL"`,
+	},
+	{
+		name: "source code url is not empty",
+		stepYML: `
+title: Script
+summary: Run any custom script you want. The power is in your hands. Use it wisely!
+website: https://github.com/bitrise-io/steps-script
+source_code_url: 
+support_url: https://github.com/bitrise-io/steps-script/issues
+`,
+		wantErr: `I[#/source_code_url] S[#/properties/source_code_url/$ref] doesn't validate with "#/definitions/URL"`,
+	},
+	{
+		name: "unsupported type tag",
+		stepYML: `
+title: Script
+summary: Run any custom script you want. The power is in your hands. Use it wisely!
+website: https://github.com/bitrise-io/steps-script
+source_code_url: https://github.com/bitrise-io/steps-script
+support_url: https://github.com/bitrise-io/steps-script/issues
+type_tags:
+- utility
+- invalid
+`,
+		wantErr: `I[#/type_tags/1] S[#/properties/type_tags/items/enum] value must be one of "access-control", "artifact-info", "installer", "deploy", "utility", "dependency", "code-sign", "build", "test", "notification"`,
+	},
+	{
+		name: "unsupported project type tag",
+		stepYML: `
+title: Script
+summary: Run any custom script you want. The power is in your hands. Use it wisely!
+website: https://github.com/bitrise-io/steps-script
+source_code_url: https://github.com/bitrise-io/steps-script
+support_url: https://github.com/bitrise-io/steps-script/issues
+project_type_tags:
+- ios
+- unsupported
+`,
+		wantErr: `I[#/project_type_tags/1] S[#/properties/project_type_tags/items/enum] value must be one of "ios", "macos", "android", "xamarin", "react-native", "cordova", "ionic", "flutter"`,
+	},
+	{
+		name: "timtout > 0",
+		stepYML: `
+title: Script
+summary: Run any custom script you want. The power is in your hands. Use it wisely!
+website: https://github.com/bitrise-io/steps-script
+source_code_url: https://github.com/bitrise-io/steps-script
+support_url: https://github.com/bitrise-io/steps-script/issues
+timeout: 0
+`,
+		wantErr: `I[#/timeout] S[#/properties/timeout/exclusiveMinimum] must be > 0/1 but found 0`,
+	},
 	{
 		name: "deps name can not be empty",
 		stepYML: `
@@ -45,15 +157,7 @@ source_code_url: https://github.com/bitrise-io/steps-script
 support_url: https://github.com/bitrise-io/steps-script/issues
 deps:
   brew:
-  - name: 
-inputs:
-- content: ""
-  opts:
-    title: "Script content"
-outputs:
-- RUNNER_BIN: value
-  opts:
-    title: Runner binary
+  - name:
 `,
 		wantErr: `I[#/deps] S[#/properties/deps/$ref] doesn't validate with "#/definitions/DepsModel"`,
 	},
@@ -67,15 +171,7 @@ source_code_url: https://github.com/bitrise-io/steps-script
 support_url: https://github.com/bitrise-io/steps-script/issues
 dependencies:
 - manager: brew
-  name: 
-inputs:
-- content: ""
-  opts:
-    title: "Script content"
-outputs:
-- RUNNER_BIN: value
-  opts:
-    title: Runner binary
+  name:
 `,
 		wantErr: `I[#/dependencies/0] S[#/properties/dependencies/items/$ref] doesn't validate with "#/definitions/DependencyModel"`,
 	},
@@ -94,14 +190,6 @@ dependencies:
   name: xcode
 - manager: aptget
   name: zip
-inputs:
-- content: ""
-  opts:
-    title: "Script content"
-outputs:
-- RUNNER_BIN: value
-  opts:
-    title: Runner binary
 `,
 		wantErr: `I[#/dependencies/2] S[#/properties/dependencies/items/$ref] doesn't validate with "#/definitions/DependencyModel"`,
 	},
@@ -115,15 +203,7 @@ source_code_url: https://github.com/bitrise-io/steps-script
 support_url: https://github.com/bitrise-io/steps-script/issues
 toolkit:
   go:
-    package_name: 
-inputs:
-- content: ""
-  opts:
-    title: "Script content"
-outputs:
-- RUNNER_BIN: value
-  opts:
-    title: Runner binary
+    package_name:
 `,
 		wantErr: `I[#/toolkit] S[#/properties/toolkit/$ref] doesn't validate with "#/definitions/StepToolkitModel"`,
 	},
@@ -137,94 +217,9 @@ source_code_url: https://github.com/bitrise-io/steps-script
 support_url: https://github.com/bitrise-io/steps-script/issues
 toolkit:
   bash:
-    entry_file: 
-inputs:
-- content: ""
-  opts:
-    title: "Script content"
-outputs:
-- RUNNER_BIN: value
-  opts:
-    title: Runner binary
+    entry_file:
 `,
 		wantErr: `I[#/toolkit] S[#/properties/toolkit/$ref] doesn't validate with "#/definitions/StepToolkitModel"`,
-	},
-	{
-		name: "timtout > 0",
-		stepYML: `
-title: Script
-summary: Run any custom script you want. The power is in your hands. Use it wisely!
-website: https://github.com/bitrise-io/steps-script
-source_code_url: https://github.com/bitrise-io/steps-script
-support_url: https://github.com/bitrise-io/steps-script/issues
-timeout: 0
-inputs:
-- content: ""
-  opts:
-    title: "Script content"
-outputs:
-- RUNNER_BIN: value
-  opts:
-    title: Runner binary
-`,
-		wantErr: `I[#/timeout] S[#/properties/timeout/exclusiveMinimum] must be > 0/1 but found 0`,
-	},
-	{
-		name: "title is not empty",
-		stepYML: `
-title: 
-summary: Run any custom script you want. The power is in your hands. Use it wisely!
-website: https://github.com/bitrise-io/steps-script
-source_code_url: https://github.com/bitrise-io/steps-script
-support_url: https://github.com/bitrise-io/steps-script/issues
-inputs:
-- content: ""
-  opts:
-    title: "Script content"
-outputs:
-- RUNNER_BIN: value
-  opts:
-    title: Runner binary
-`,
-		wantErr: `I[#/title] S[#/properties/title/type] expected string, but got null`,
-	},
-	{
-		name: "support url is not empty",
-		stepYML: `
-title: Script
-summary: Run any custom script you want. The power is in your hands. Use it wisely!
-website: https://github.com/bitrise-io/steps-script
-source_code_url: https://github.com/bitrise-io/steps-script
-support_url: 
-inputs:
-- content: ""
-  opts:
-    title: "Script content"
-outputs:
-- RUNNER_BIN: value
-  opts:
-    title: Runner binary
-`,
-		wantErr: `I[#/support_url] S[#/properties/support_url/$ref] doesn't validate with "#/definitions/URL"`,
-	},
-	{
-		name: "source code url is not empty",
-		stepYML: `
-title: Script
-summary: Run any custom script you want. The power is in your hands. Use it wisely!
-website: https://github.com/bitrise-io/steps-script
-source_code_url: 
-support_url: https://github.com/bitrise-io/steps-script/issues
-inputs:
-- content: ""
-  opts:
-    title: "Script content"
-outputs:
-- RUNNER_BIN: value
-  opts:
-    title: Runner binary
-`,
-		wantErr: `I[#/source_code_url] S[#/properties/source_code_url/$ref] doesn't validate with "#/definitions/URL"`,
 	},
 }
 

@@ -116,23 +116,6 @@ inputs:
 			wantWarnings:   []string{`I[#/inputs/0/content] S[#/definitions/InputEnvVar/additionalProperties/type] expected null or string, but got number`},
 		},
 		{
-			name: "step input value is not a string or null",
-			stepYML: `
-title: Script
-summary: Run any custom script you want. The power is in your hands. Use it wisely!
-website: https://github.com/bitrise-io/steps-script
-source_code_url: https://github.com/bitrise-io/steps-script
-support_url: https://github.com/bitrise-io/steps-script/issues
-inputs:
-- content: ""
-  opts:
-    title: Script content
-    summary: Type your script here.
-`,
-			warningPattern: InputValueOptionsDefaultValuePattern,
-			wantWarnings:   []string{`I[#/inputs/0/content] S[#/definitions/InputEnvVar/additionalProperties/type] expected null or string, but got number`},
-		},
-		{
 			name: "step input value options has at least 2 elements",
 			stepYML: `
 title: Script

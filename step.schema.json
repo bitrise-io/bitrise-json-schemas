@@ -212,7 +212,16 @@
               "opts": {
                 "required": [
                   "value_options"
-                ]
+                ],
+                "properties": {
+                  "value_options": {
+                    "type": "array",
+                    "minItems": 2,
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
               }
             }
           },

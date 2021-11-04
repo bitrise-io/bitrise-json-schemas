@@ -1,12 +1,25 @@
 package schemas
 
 import (
+	"errors"
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/santhosh-tekuri/jsonschema/v3"
 	"gopkg.in/yaml.v2"
 )
+
+var WarningPatters = []string{
+	`#: additionalProperties .+ not allowed`, // is_requires_admin_user, host_os_tags, dependencies are deprecated
+	`#: missing properties: .+`,              // support_url, source_code_url are required
+	`#/summary: does not match pattern "\^\.\{1,100\}\$"`,
+	`#/deps/(brew|apt_get)+/\d+/(name|bin_name)+: not failed`, // go listed as dependency
+	`#/(inputs|outputs)+/\d+/opts: missing properties: "summary"`,
+	`#/(inputs|outputs)+/\d+/opts/summary: length must be >= 1, but got 0`,
+	`#/inputs/\d+/.+: expected .+, but got .+`, // input value is not a string or null
+	`#/inputs/\d+/opts/value_options: minimum 2 items allowed, but found \d+ items`,
+}
 
 type JSONSchemaValidator struct {
 	schema *jsonschema.Schema
@@ -27,21 +40,62 @@ func NewJSONSchemaValidator(schemaStr string) (*JSONSchemaValidator, error) {
 	}, nil
 }
 
-func (v JSONSchemaValidator) Validate(ymlStr string) error {
+func (v JSONSchemaValidator) Validate(ymlStr string, warningPatterns ...string) ([]string, []string, error) {
 	var m interface{}
 	err := yaml.Unmarshal([]byte(ymlStr), &m)
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
 	m, err = recursiveJSONMarshallable(m)
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
 
 	if err := v.schema.ValidateInterface(m); err != nil {
-		return err
+		validationErr := &jsonschema.ValidationError{}
+		if errors.As(err, &validationErr) {
+			warnings, errors := collectIssues(*validationErr, warningPatterns)
+			return warnings, errors, nil
+		}
+		return nil, nil, err
 	}
-	return nil
+
+	return nil, nil, nil
+}
+
+func collectIssues(err jsonschema.ValidationError, warningPatterns []string) (warnings []string, errors []string) {
+	var issues []string
+	issues = recursivelyCollectIssues(err, issues)
+
+	for _, issue := range issues {
+		isWarning := false
+		for _, pattern := range warningPatterns {
+			re := regexp.MustCompile(pattern)
+			if re.MatchString(issue) {
+				isWarning = true
+				warnings = append(warnings, issue)
+				break
+			}
+		}
+		if !isWarning {
+			errors = append(errors, issue)
+		}
+	}
+
+	return warnings, errors
+}
+
+func recursivelyCollectIssues(err jsonschema.ValidationError, issues []string) []string {
+	if len(err.Causes) == 0 {
+		issues = append(issues, fmt.Sprintf("%s: %s", err.InstancePtr, err.Message))
+		return issues
+	}
+
+	for _, cause := range err.Causes {
+		issues = recursivelyCollectIssues(*cause, issues)
+	}
+
+	return issues
 }
 
 func recursiveJSONMarshallable(source interface{}) (interface{}, error) {

@@ -10,15 +10,26 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+const (
+	AdditionalPropertiesNotAllowedPattern = `I\[#\] S\[#/additionalProperties\] additionalProperties .+ not allowed` // is_requires_admin_user, host_os_tags, dependencies are deprecated
+	MissingPropertiesPattern              = `I\[#\] S\[#/required\] missing properties: .+`                          // support_url, source_code_url are required
+	SummaryDoesNotMatchPattern            = `I\[#/summary\] S\[#/properties/summary/pattern\] does not match pattern "\^\.\{1,100\}\$"`
+	DepsNotFailedPattern                  = `I\[#/deps/(brew|apt_get)+/\d+/(name|bin_name)+\] S\[#/definitions/(BrewDepModel|AptGetDepModel)+/properties/(name|bin_name)+/not\] not failed` // go listed as dependency
+	InputOutputMissingSummaryPattern      = `I\[#/(inputs|outputs)+/\d+/opts\] S\[#/definitions/EnvVarOpts/required\] missing properties: "summary"`
+	InputOutputEmptySummaryPattern        = `I\[#/(inputs|outputs)+/\d+/opts/summary\] S\[#/definitions/EnvVarOpts/properties/summary/minLength\] length must be >= 1, but got 0`
+	InputValueOptionsDefaultValuePattern  = `I\[#/inputs/\d+/.+\] S\[#/definitions/InputEnvVar/additionalProperties/type\] expected .+, but got .+` // input value is not a string or null
+	InputValueOptionsMinItemsPattern      = `I\[#/inputs/\d+/opts/value_options\] S\[#/definitions/EnvVarOpts/properties/value_options/minItems\] minimum 2 items allowed, but found \d+ items`
+)
+
 var WarningPatters = []string{
-	`#: additionalProperties .+ not allowed`, // is_requires_admin_user, host_os_tags, dependencies are deprecated
-	`#: missing properties: .+`,              // support_url, source_code_url are required
-	`#/summary: does not match pattern "\^\.\{1,100\}\$"`,
-	`#/deps/(brew|apt_get)+/\d+/(name|bin_name)+: not failed`, // go listed as dependency
-	`#/(inputs|outputs)+/\d+/opts: missing properties: "summary"`,
-	`#/(inputs|outputs)+/\d+/opts/summary: length must be >= 1, but got 0`,
-	`#/inputs/\d+/.+: expected .+, but got .+`, // input value is not a string or null
-	`#/inputs/\d+/opts/value_options: minimum 2 items allowed, but found \d+ items`,
+	AdditionalPropertiesNotAllowedPattern,
+	MissingPropertiesPattern,
+	SummaryDoesNotMatchPattern,
+	DepsNotFailedPattern,
+	InputOutputMissingSummaryPattern,
+	InputOutputEmptySummaryPattern,
+	InputValueOptionsDefaultValuePattern,
+	InputValueOptionsMinItemsPattern,
 }
 
 type JSONSchemaValidator struct {
@@ -73,11 +84,12 @@ func collectIssues(err jsonschema.ValidationError, warningPatterns []string) (wa
 			re := regexp.MustCompile(pattern)
 			if re.MatchString(issue) {
 				isWarning = true
-				warnings = append(warnings, issue)
 				break
 			}
 		}
-		if !isWarning {
+		if isWarning {
+			warnings = append(warnings, issue)
+		} else {
 			errors = append(errors, issue)
 		}
 	}

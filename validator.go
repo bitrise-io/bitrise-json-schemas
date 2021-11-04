@@ -87,7 +87,7 @@ func collectIssues(err jsonschema.ValidationError, warningPatterns []string) (wa
 
 func recursivelyCollectIssues(err jsonschema.ValidationError, issues []string) []string {
 	if len(err.Causes) == 0 {
-		issues = append(issues, fmt.Sprintf("%s: %s", err.InstancePtr, err.Message))
+		issues = append(issues, fmt.Sprintf("I[%s] S[%s] %s", err.InstancePtr, err.SchemaPtr, err.Message))
 		return issues
 	}
 

@@ -1,6 +1,7 @@
 package schemas_test
 
 import (
+	"strings"
 	"testing"
 
 	schemas "github.com/bitrise-io/bitrise-json-schemas"
@@ -14,15 +15,19 @@ func TestStepSchema(t *testing.T) {
 		}
 
 		t.Run(tt.name, func(t *testing.T) {
-			gotErr := validator.Validate(tt.stepYML)
-			if tt.wantErr == "" && gotErr != nil {
-				t.Errorf("unexpected error: %v", gotErr)
+			_, errors, err := validator.Validate(tt.stepYML)
+			if err != nil {
+				t.Errorf("validation has failed: %s", err)
 			}
-			if tt.wantErr != "" && gotErr == nil {
+
+			if tt.wantErr == "" && errors != nil {
+				t.Errorf("unexpected error: %v", strings.Join(errors, "\n"))
+			}
+			if tt.wantErr != "" && errors == nil {
 				t.Errorf("expected error: %s, got nil", tt.wantErr)
 			}
-			if tt.wantErr != "" && gotErr != nil && gotErr.Error() != tt.wantErr {
-				t.Errorf("expected error: %s, got: %s", tt.wantErr, gotErr)
+			if tt.wantErr != "" && errors != nil && strings.Join(errors, "\n") != tt.wantErr {
+				t.Errorf("expected error: %s, got: %s", tt.wantErr, strings.Join(errors, "\n"))
 			}
 		})
 	}
@@ -116,7 +121,7 @@ website:
 source_code_url: https://github.com/bitrise-io/steps-script
 support_url: https://github.com/bitrise-io/steps-script/issues
 `,
-		wantErr: `I[#/website] S[#/properties/website/$ref] doesn't validate with "#/definitions/URL"`,
+		wantErr: `I[#/website] S[#/definitions/URL/type] expected string, but got null`,
 	},
 	{
 		name: "support url is not empty",
@@ -127,7 +132,7 @@ website: https://github.com/bitrise-io/steps-script
 source_code_url: https://github.com/bitrise-io/steps-script
 support_url:
 `,
-		wantErr: `I[#/support_url] S[#/properties/support_url/$ref] doesn't validate with "#/definitions/URL"`,
+		wantErr: `I[#/support_url] S[#/definitions/URL/type] expected string, but got null`,
 	},
 	{
 		name: "source code url is not empty",
@@ -138,7 +143,7 @@ website: https://github.com/bitrise-io/steps-script
 source_code_url: 
 support_url: https://github.com/bitrise-io/steps-script/issues
 `,
-		wantErr: `I[#/source_code_url] S[#/properties/source_code_url/$ref] doesn't validate with "#/definitions/URL"`,
+		wantErr: `I[#/source_code_url] S[#/definitions/URL/type] expected string, but got null`,
 	},
 	{
 		name: "website url is in http format",
@@ -149,7 +154,8 @@ website: git@github.com:bitrise-steplib/steps-script.git
 source_code_url: https://github.com/bitrise-io/steps-script
 support_url: https://github.com/bitrise-io/steps-script/issues
 `,
-		wantErr: `I[#/website] S[#/properties/website/$ref] doesn't validate with "#/definitions/URL"`,
+		wantErr: `I[#/website] S[#/definitions/URL/format] "git@github.com:bitrise-steplib/steps-script.git" is not valid "uri"
+I[#/website] S[#/definitions/URL/pattern] does not match pattern "^https?://"`,
 	},
 	{
 		name: "source code url is in http format",
@@ -160,7 +166,8 @@ website: https://github.com/bitrise-io/steps-script
 source_code_url: git@github.com:bitrise-steplib/steps-script.git
 support_url: https://github.com/bitrise-io/steps-script/issues
 `,
-		wantErr: `I[#/source_code_url] S[#/properties/source_code_url/$ref] doesn't validate with "#/definitions/URL"`,
+		wantErr: `I[#/source_code_url] S[#/definitions/URL/format] "git@github.com:bitrise-steplib/steps-script.git" is not valid "uri"
+I[#/source_code_url] S[#/definitions/URL/pattern] does not match pattern "^https?://"`,
 	},
 	{
 		name: "support url is in http format",
@@ -171,7 +178,8 @@ website: https://github.com/bitrise-io/steps-script
 source_code_url: https://github.com/bitrise-io/steps-script
 support_url: git@github.com:bitrise-steplib/steps-script.git
 `,
-		wantErr: `I[#/support_url] S[#/properties/support_url/$ref] doesn't validate with "#/definitions/URL"`,
+		wantErr: `I[#/support_url] S[#/definitions/URL/format] "git@github.com:bitrise-steplib/steps-script.git" is not valid "uri"
+I[#/support_url] S[#/definitions/URL/pattern] does not match pattern "^https?://"`,
 	},
 	{
 		name: "unsupported type tag",
@@ -199,7 +207,7 @@ is_always_run: false
 type_tags:
 - notification
 `,
-		wantErr: `I[#] S[#/then] if-then failed`,
+		wantErr: `I[#/is_always_run] S[#/then/properties/is_always_run/const] value must be true`,
 	},
 	{
 		name: "unsupported project type tag",
@@ -239,7 +247,7 @@ deps:
   brew:
   - name:
 `,
-		wantErr: `I[#/deps] S[#/properties/deps/$ref] doesn't validate with "#/definitions/DepsModel"`,
+		wantErr: `I[#/deps/brew/0/name] S[#/definitions/BrewDepModel/properties/name/type] expected string, but got null`,
 	},
 	{
 		name: "go is not listed as deps",
@@ -253,7 +261,7 @@ deps:
   brew:
   - name: go
 `,
-		wantErr: `I[#/deps] S[#/properties/deps/$ref] doesn't validate with "#/definitions/DepsModel"`,
+		wantErr: `I[#/deps/brew/0/name] S[#/definitions/BrewDepModel/properties/name/not] not failed`,
 	},
 	{
 		name: "deprecated dependencies property is not allowed",
@@ -284,7 +292,7 @@ toolkit:
     entry_file: step.sh
 
 `,
-		wantErr: `I[#/toolkit] S[#/properties/toolkit/$ref] doesn't validate with "#/definitions/StepToolkitModel"`,
+		wantErr: `I[#/toolkit] S[#/definitions/StepToolkitModel/maxProperties] maximum 1 properties allowed, but found 2 properties`,
 	},
 	{
 		name: "go toolkit package name is not empty",
@@ -298,7 +306,7 @@ toolkit:
   go:
     package_name:
 `,
-		wantErr: `I[#/toolkit] S[#/properties/toolkit/$ref] doesn't validate with "#/definitions/StepToolkitModel"`,
+		wantErr: `I[#/toolkit/go/package_name] S[#/definitions/GoStepToolkitModel/properties/package_name/type] expected string, but got null`,
 	},
 	{
 		name: "bash toolkit entry file is not empty",
@@ -312,7 +320,7 @@ toolkit:
   bash:
     entry_file:
 `,
-		wantErr: `I[#/toolkit] S[#/properties/toolkit/$ref] doesn't validate with "#/definitions/StepToolkitModel"`,
+		wantErr: `I[#/toolkit/bash/entry_file] S[#/definitions/BashStepToolkitModel/properties/entry_file/type] expected string, but got null`,
 	},
 	{
 		name: "deprecated host os tags property is not allowed",
@@ -351,9 +359,24 @@ support_url: https://github.com/bitrise-io/steps-script/issues
 inputs:
 - content: ""
   opts:
-    title: 
+    summary: Script content
 `,
-		wantErr: `I[#/inputs/0] S[#/properties/inputs/items/$ref] doesn't validate with "#/definitions/InputEnvVar"`,
+		wantErr: `I[#/inputs/0/opts] S[#/definitions/EnvVarOpts/required] missing properties: "title"`,
+	},
+	{
+		name: "input summary is required",
+		stepYML: `
+title: Script
+summary: Run any custom script you want. The power is in your hands. Use it wisely!
+website: https://github.com/bitrise-io/steps-script
+source_code_url: https://github.com/bitrise-io/steps-script
+support_url: https://github.com/bitrise-io/steps-script/issues
+inputs:
+- content: ""
+  opts:
+    title: Script content
+`,
+		wantErr: `I[#/inputs/0/opts] S[#/definitions/EnvVarOpts/required] missing properties: "summary"`,
 	},
 	{
 		name: "is expand is set if is sensitive is set",
@@ -367,10 +390,11 @@ inputs:
 - content: ""
   opts:
     title: Script content
+    summary: Script content
     is_sensitive: true
     is_expand: false
 `,
-		wantErr: `I[#/inputs/0] S[#/properties/inputs/items/$ref] doesn't validate with "#/definitions/InputEnvVar"`,
+		wantErr: `I[#/inputs/0/opts/is_expand] S[#/definitions/EnvVarOpts/then/properties/is_expand/const] value must be true`,
 	},
 	{
 		name: "input has default value is value options defined",
@@ -384,11 +408,12 @@ inputs:
 - content: 
   opts:
     title: Script content
+    summary: Script content
     value_options:
     - "yes"
     - "no"
 `,
-		wantErr: `I[#/inputs/0] S[#/properties/inputs/items/$ref] doesn't validate with "#/definitions/InputEnvVar"`,
+		wantErr: `I[#/inputs/0/content] S[#/definitions/InputEnvVar/allOf/1/then/additionalProperties/type] expected string, but got null`,
 	},
 	{
 		name: "input value option elements are strings",
@@ -402,10 +427,12 @@ inputs:
 - content: "true"
   opts:
     title: Script content
+    summary: Script content
     value_options:
     - true
     - false
 `,
-		wantErr: `I[#/inputs/0] S[#/properties/inputs/items/$ref] doesn't validate with "#/definitions/InputEnvVar"`,
+		wantErr: `I[#/inputs/0/opts/value_options/0] S[#/definitions/EnvVarOpts/properties/value_options/items/type] expected string, but got boolean
+I[#/inputs/0/opts/value_options/1] S[#/definitions/EnvVarOpts/properties/value_options/items/type] expected string, but got boolean`,
 	},
 }

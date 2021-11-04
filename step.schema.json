@@ -59,6 +59,13 @@
     "support_url": {
       "$ref": "#/definitions/URL"
     },
+    "published_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source": {
+      "$ref": "#/definitions/StepSourceModel"
+    },
     "project_type_tags": {
       "type": "array",
       "minItems": 1,
@@ -140,6 +147,18 @@
     }
   },
   "definitions": {
+    "StepSourceModel": {
+      "properties": {
+        "git": {
+          "type": "string"
+        },
+        "commit": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "URL": {
       "type": "string",
       "format": "uri",

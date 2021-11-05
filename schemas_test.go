@@ -5,11 +5,12 @@ import (
 	"testing"
 
 	schemas "github.com/bitrise-io/bitrise-json-schemas"
+	"github.com/bitrise-io/bitrise-json-schemas/validator"
 )
 
 func TestStepSchema(t *testing.T) {
 	for _, tt := range tests {
-		validator, err := schemas.NewJSONSchemaValidator(schemas.StepSchema)
+		validator, err := validator.NewJSONSchemaValidator(schemas.StepSchema)
 		if err != nil {
 			t.Fatalf("unexpected schema compile error: %v", err)
 		}

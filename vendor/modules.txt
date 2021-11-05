@@ -1,0 +1,6 @@
+# github.com/santhosh-tekuri/jsonschema/v3 v3.1.0
+## explicit; go 1.15
+github.com/santhosh-tekuri/jsonschema/v3
+# gopkg.in/yaml.v2 v2.4.0
+## explicit; go 1.15
+gopkg.in/yaml.v2

@@ -50,7 +50,9 @@
       "type": "object"
     },
     "BitriseDataModel": {
-      "required": ["format_version"],
+      "required": [
+        "format_version"
+      ],
       "properties": {
         "format_version": {
           "type": "string"
@@ -161,7 +163,9 @@
       "type": "object"
     },
     "GoStepToolkitModel": {
-      "required": ["package_name"],
+      "required": [
+        "package_name"
+      ],
       "properties": {
         "package_name": {
           "type": "string"

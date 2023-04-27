@@ -193,11 +193,14 @@
     },
     "StageModel": {
       "properties": {
+        "abort_on_fail": {
+          "type": "boolean"
+        },
         "workflows": {
           "items": {
             "patternProperties": {
               ".*": {
-                "$ref": "#/definitions/WorkflowModel"
+                "$ref": "#/definitions/WorkflowStageConfig"
               }
             },
             "type": "object"
@@ -365,6 +368,15 @@
         },
         "is_pull_request_allowed": {
           "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "WorkflowStageConfig": {
+      "properties": {
+        "run_if": {
+          "type": "string"
         }
       },
       "additionalProperties": false,

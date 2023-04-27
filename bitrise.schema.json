@@ -196,6 +196,9 @@
         "abort_on_fail": {
           "type": "boolean"
         },
+        "should_always_run": {
+          "type": "boolean"
+        },
         "workflows": {
           "items": {
             "patternProperties": {

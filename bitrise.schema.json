@@ -200,7 +200,7 @@
           "items": {
             "patternProperties": {
               ".*": {
-                "$ref": "#/definitions/WorkflowStageConfig"
+                "$ref": "#/definitions/WorkflowStageConfigModel"
               }
             },
             "type": "object"
@@ -373,7 +373,7 @@
       "additionalProperties": false,
       "type": "object"
     },
-    "WorkflowStageConfig": {
+    "WorkflowStageConfigModel": {
       "properties": {
         "run_if": {
           "type": "string"

@@ -1,6 +1,6 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
   "$ref": "#/definitions/BitriseDataModel",
+  "$schema": "http://json-schema.org/draft-04/schema#",
   "definitions": {
     "AppModel": {
       "properties": {
@@ -176,6 +176,15 @@
     },
     "PipelineModel": {
       "properties": {
+        "title": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
         "stages": {
           "items": {
             "patternProperties": {
@@ -193,6 +202,15 @@
     },
     "StageModel": {
       "properties": {
+        "title": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
         "abort_on_fail": {
           "type": "boolean"
         },

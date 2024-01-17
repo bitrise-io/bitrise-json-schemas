@@ -375,6 +375,9 @@
         "pull_request_target_branch": {
           "type": "string"
         },
+        "draft_pull_request_enabled": {
+          "type": "boolean"
+        },
         "tag": {
           "type": "string"
         },

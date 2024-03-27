@@ -364,22 +364,23 @@
       "additionalProperties": false,
       "type": "object"
     },
+    "TriggerMapItemModelRegexCondition": {
+      "properties": {
+        "regex": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "TriggerMapItemModel": {
       "properties": {
-        "push_branch": {
-          "type": "string"
+        "type": {
+          "type": "string",
+          "enum": ["push", "pull_request", "tag"]
         },
-        "pull_request_source_branch": {
-          "type": "string"
-        },
-        "pull_request_target_branch": {
-          "type": "string"
-        },
-        "draft_pull_request_enabled": {
+        "enabled": {
           "type": "boolean"
-        },
-        "tag": {
-          "type": "string"
         },
         "pipeline": {
           "type": "string"
@@ -387,6 +388,55 @@
         "workflow": {
           "type": "string"
         },
+
+        "push_branch": {
+          "oneOf": [
+            {"$ref": "#/definitions/TriggerMapItemModelRegexCondition"},
+            {"type": "string"}
+          ]
+        },
+        "commit_message": {
+          "oneOf": [
+            {"$ref": "#/definitions/TriggerMapItemModelRegexCondition"},
+            {"type": "string"}
+          ]
+        },
+        "changed_files": {
+          "oneOf": [
+            {"$ref": "#/definitions/TriggerMapItemModelRegexCondition"},
+            {"type": "string"}
+          ]
+        },
+
+        "pull_request_source_branch": {
+          "oneOf": [
+            {"$ref": "#/definitions/TriggerMapItemModelRegexCondition"},
+            {"type": "string"}
+          ]
+        },
+        "pull_request_target_branch": {
+          "oneOf": [
+            {"$ref": "#/definitions/TriggerMapItemModelRegexCondition"},
+            {"type": "string"}
+          ]
+        },
+        "draft_pull_request_enabled": {
+          "type": "boolean"
+        },
+        "pull_request_label": {
+          "oneOf": [
+            {"$ref": "#/definitions/TriggerMapItemModelRegexCondition"},
+            {"type": "string"}
+          ]
+        },
+
+        "tag": {
+          "oneOf": [
+            {"$ref": "#/definitions/TriggerMapItemModelRegexCondition"},
+            {"type": "string"}
+          ]
+        },
+
         "pattern": {
           "type": "string"
         },

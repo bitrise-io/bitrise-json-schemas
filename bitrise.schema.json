@@ -429,6 +429,12 @@
             {"type": "string"}
           ]
         },
+        "pull_request_comment": {
+          "oneOf": [
+            {"$ref": "#/definitions/TriggerMapItemModelRegexCondition"},
+            {"type": "string"}
+          ]
+        },
 
         "tag": {
           "oneOf": [

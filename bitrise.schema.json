@@ -306,6 +306,9 @@
         "timeout": {
           "type": "integer"
         },
+        "no_output_timeout": {
+          "type": "integer"
+        },
         "meta": {
           "patternProperties": {
             ".*": {

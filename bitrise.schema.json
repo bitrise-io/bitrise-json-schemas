@@ -199,7 +199,7 @@
         "workflows": {
           "patternProperties": {
             ".*": {
-              "$ref": "#/definitions/DagWorkflowModel"
+              "$ref": "#/definitions/GraphPipelineWorkflowModel"
             }
           },
           "type": "object"
@@ -208,7 +208,7 @@
       "additionalProperties": false,
       "type": "object"
     },
-    "DagWorkflowModel": {
+    "GraphPipelineWorkflowModel": {
       "properties": {
         "depends_on": {
           "items": {
@@ -224,13 +224,13 @@
           "enum": ["off", "workflow"]
         },
         "run_if": {
-          "$ref": "#/definitions/DagWorkflowRunIfModel"
+          "$ref": "#/definitions/GraphPipelineWorkflowRunIfModel"
         }
       },
       "additionalProperties": false,
       "type": "object"
     },
-    "DagWorkflowRunIfModel": {
+    "GraphPipelineWorkflowRunIfModel": {
       "required": [
         "expression"
       ],

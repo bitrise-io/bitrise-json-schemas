@@ -482,7 +482,6 @@
           "description": "Tool version to set up. Version syntax supports exact versions (e.g. '1.2.3'), partial matches to the latest release (e.g. '22:latest'), partial matches to installed versions (e.g. '1.2:installed'), as well as the special aliases 'latest' and 'installed' to select the highest respective version."
         }
       },
-      "additionalProperties": false,
       "type": "object"
     },
     "ToolConfigModel": {
@@ -501,11 +500,9 @@
               "description": "URL to the plugin source repository (git clone URL)"
             }
           },
-          "additionalProperties": false,
           "type": "object"
         }
       },
-      "additionalProperties": false,
       "type": "object"
     },
     "TriggersModel": {

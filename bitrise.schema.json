@@ -1,5 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://json.schemastore.org/bitrise.json",
   "$ref": "#/definitions/BitriseDataModel",
   "definitions": {
     "AppModel": {
@@ -13,16 +14,11 @@
         "description": {
           "type": "string"
         },
+        "status_report_name": {
+          "$ref": "#/definitions/StatusReportNameModel"
+        },
         "envs": {
-          "items": {
-            "patternProperties": {
-              ".*": {
-                "additionalProperties": true
-              }
-            },
-            "type": "object"
-          },
-          "type": "array"
+          "$ref": "#/definitions/EnvModel"
         }
       },
       "additionalProperties": false,
@@ -50,8 +46,9 @@
       "type": "object"
     },
     "BitriseDataModel": {
-      "required": [
-        "format_version"
+      "anyOf": [
+        { "required": ["format_version"] },
+        { "required": ["include"] }
       ],
       "properties": {
         "format_version": {
@@ -71,6 +68,22 @@
         },
         "description": {
           "type": "string"
+        },
+        "services": {
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/definitions/ContainerModel"
+            }
+          },
+          "type": "object"
+        },
+        "containers": {
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/definitions/ContainerModel"
+            }
+          },
+          "type": "object"
         },
         "app": {
           "$ref": "#/definitions/AppModel"
@@ -112,6 +125,26 @@
             }
           },
           "type": "object"
+        },
+        "step_bundles": {
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/definitions/StepBundleModel"
+            }
+          },
+          "type": "object"
+        },
+        "tools": {
+          "$ref": "#/definitions/ToolsModel"
+        },
+        "tool_config": {
+          "$ref": "#/definitions/ToolConfigModel"
+        },
+        "include": {
+          "items": {
+            "$ref": "#/definitions/IncludeItemModel"
+          },
+          "type": "array"
         }
       },
       "additionalProperties": false,
@@ -132,6 +165,31 @@
     "CheckOnlyDepModel": {
       "properties": {
         "name": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "ContainerModel": {
+      "required": ["image"],
+      "properties": {
+        "image": {
+          "type": "string"
+        },
+        "credentials": {
+          "$ref": "#/definitions/DockerCredentialModel"
+        },
+        "ports": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "envs": {
+          "$ref": "#/definitions/EnvModel"
+        },
+        "options": {
           "type": "string"
         }
       },
@@ -162,10 +220,35 @@
       "additionalProperties": false,
       "type": "object"
     },
+    "DockerCredentialModel": {
+      "required": ["username", "password"],
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "server": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "EnvModel": {
+      "items": {
+        "patternProperties": {
+          ".*": {
+            "additionalProperties": true
+          }
+        },
+        "type": "object"
+      },
+      "type": "array"
+    },
     "GoStepToolkitModel": {
-      "required": [
-        "package_name"
-      ],
+      "required": ["package_name"],
       "properties": {
         "package_name": {
           "type": "string"
@@ -185,6 +268,12 @@
         "description": {
           "type": "string"
         },
+        "triggers": {
+          "$ref": "#/definitions/TriggersModel"
+        },
+        "status_report_name": {
+          "$ref": "#/definitions/StatusReportNameModel"
+        },
         "stages": {
           "items": {
             "patternProperties": {
@@ -203,6 +292,9 @@
             }
           },
           "type": "object"
+        },
+        "priority": {
+          "$ref": "#/definitions/PriorityModel"
         }
       },
       "additionalProperties": false,
@@ -225,15 +317,22 @@
         },
         "run_if": {
           "$ref": "#/definitions/GraphPipelineWorkflowRunIfModel"
+        },
+        "parallel": {
+          "oneOf": [{ "type": "integer" }, { "type": "string" }]
+        },
+        "uses": {
+          "type": "string"
+        },
+        "inputs": {
+          "$ref": "#/definitions/EnvModel"
         }
       },
       "additionalProperties": false,
       "type": "object"
     },
     "GraphPipelineWorkflowRunIfModel": {
-      "required": [
-        "expression"
-      ],
+      "required": ["expression"],
       "properties": {
         "expression": {
           "type": "string"
@@ -273,6 +372,12 @@
       },
       "additionalProperties": false,
       "type": "object"
+    },
+    "StatusReportNameModel": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "pattern": "^[a-zA-Z0-9,./():\\-_ <>\\[\\]\\|]*$"
     },
     "StepModel": {
       "properties": {
@@ -360,26 +465,195 @@
           "type": "object"
         },
         "inputs": {
+          "$ref": "#/definitions/EnvModel"
+        },
+        "outputs": {
+          "$ref": "#/definitions/EnvModel"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "ToolsModel": {
+      "description": "Mapping of tool IDs to versions to set up. Version syntax supports exact versions (e.g. '1.2.3'), partial matches to the latest release (e.g. '22:latest'), partial matches to installed versions (e.g. '1.2:installed'), as well as the special aliases 'latest' and 'installed' to select the highest respective version.",
+      "patternProperties": {
+        ".*": {
+          "type": "string",
+          "description": "Tool version to set up. Version syntax supports exact versions (e.g. '1.2.3'), partial matches to the latest release (e.g. '22:latest'), partial matches to installed versions (e.g. '1.2:installed'), as well as the special aliases 'latest' and 'installed' to select the highest respective version."
+        }
+      },
+      "type": "object"
+    },
+    "ToolConfigModel": {
+      "properties": {
+        "provider": {
+          "type": "string",
+          "description": "Tool provider to use for setup. Defaults to 'asdf' if not specified.",
+          "enum": ["asdf", "mise"]
+        },
+        "extra_plugins": {
+          "description": "Additional tool plugins beyond Bitrise's vetted and tested integrations for common tools. Maps tool IDs to asdf plugin repository URLs.",
+          "patternProperties": {
+            ".*": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL to the plugin source repository (git clone URL)"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    "TriggersModel": {
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "push": {
           "items": {
-            "patternProperties": {
-              ".*": {
-                "additionalProperties": true
-              }
-            },
-            "type": "object"
+            "$ref": "#/definitions/PushTriggerModel"
           },
           "type": "array"
         },
-        "outputs": {
+        "pull_request": {
           "items": {
-            "patternProperties": {
-              ".*": {
-                "additionalProperties": true
-              }
-            },
-            "type": "object"
+            "$ref": "#/definitions/PullrequestTriggerModel"
           },
           "type": "array"
+        },
+        "tag": {
+          "items": {
+            "$ref": "#/definitions/TagTriggerModel"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "PushTriggerMapItemModelCommitsCondition": {
+      "oneOf": [
+        {
+          "required": ["pattern"],
+          "properties": {
+            "pattern": {
+              "type": "string"
+            },
+            "last_commit": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "required": ["regex"],
+          "properties": {
+            "regex": {
+              "type": "string"
+            },
+            "last_commit": {
+              "type": "boolean"
+            }
+          }
+        }
+      ],
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "PushTriggerModel": {
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "priority": {
+          "$ref": "#/definitions/PriorityModel"
+        },
+        "branch": {
+          "oneOf": [
+            { "$ref": "#/definitions/TriggerMapItemModelRegexCondition" },
+            { "type": "string" }
+          ]
+        },
+        "commit_message": {
+          "oneOf": [
+            { "$ref": "#/definitions/PushTriggerMapItemModelCommitsCondition" },
+            { "type": "string" }
+          ]
+        },
+        "changed_files": {
+          "oneOf": [
+            { "$ref": "#/definitions/PushTriggerMapItemModelCommitsCondition" },
+            { "type": "string" }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "PullrequestTriggerModel": {
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "priority": {
+          "$ref": "#/definitions/PriorityModel"
+        },
+        "draft_enabled": {
+          "type": "boolean"
+        },
+        "source_branch": {
+          "oneOf": [
+            { "$ref": "#/definitions/TriggerMapItemModelRegexCondition" },
+            { "type": "string" }
+          ]
+        },
+        "target_branch": {
+          "oneOf": [
+            { "$ref": "#/definitions/TriggerMapItemModelRegexCondition" },
+            { "type": "string" }
+          ]
+        },
+        "label": {
+          "oneOf": [
+            { "$ref": "#/definitions/TriggerMapItemModelRegexCondition" },
+            { "type": "string" }
+          ]
+        },
+        "comment": {
+          "oneOf": [
+            { "$ref": "#/definitions/TriggerMapItemModelRegexCondition" },
+            { "type": "string" }
+          ]
+        },
+        "commit_message": {
+          "oneOf": [
+            { "$ref": "#/definitions/TriggerMapItemModelRegexCondition" },
+            { "type": "string" }
+          ]
+        },
+        "changed_files": {
+          "oneOf": [
+            { "$ref": "#/definitions/TriggerMapItemModelRegexCondition" },
+            { "type": "string" }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "TagTriggerModel": {
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "priority": {
+          "$ref": "#/definitions/PriorityModel"
+        },
+        "name": {
+          "oneOf": [
+            { "$ref": "#/definitions/TriggerMapItemModelRegexCondition" },
+            { "type": "string" }
+          ]
         }
       },
       "additionalProperties": false,
@@ -436,33 +710,33 @@
 
         "push_branch": {
           "oneOf": [
-            {"$ref": "#/definitions/TriggerMapItemModelRegexCondition"},
-            {"type": "string"}
+            { "$ref": "#/definitions/TriggerMapItemModelRegexCondition" },
+            { "type": "string" }
           ]
         },
         "commit_message": {
           "oneOf": [
-            {"$ref": "#/definitions/TriggerMapItemModelRegexCondition"},
-            {"type": "string"}
+            { "$ref": "#/definitions/TriggerMapItemModelRegexCondition" },
+            { "type": "string" }
           ]
         },
         "changed_files": {
           "oneOf": [
-            {"$ref": "#/definitions/TriggerMapItemModelRegexCondition"},
-            {"type": "string"}
+            { "$ref": "#/definitions/TriggerMapItemModelRegexCondition" },
+            { "type": "string" }
           ]
         },
 
         "pull_request_source_branch": {
           "oneOf": [
-            {"$ref": "#/definitions/TriggerMapItemModelRegexCondition"},
-            {"type": "string"}
+            { "$ref": "#/definitions/TriggerMapItemModelRegexCondition" },
+            { "type": "string" }
           ]
         },
         "pull_request_target_branch": {
           "oneOf": [
-            {"$ref": "#/definitions/TriggerMapItemModelRegexCondition"},
-            {"type": "string"}
+            { "$ref": "#/definitions/TriggerMapItemModelRegexCondition" },
+            { "type": "string" }
           ]
         },
         "draft_pull_request_enabled": {
@@ -470,21 +744,21 @@
         },
         "pull_request_label": {
           "oneOf": [
-            {"$ref": "#/definitions/TriggerMapItemModelRegexCondition"},
-            {"type": "string"}
+            { "$ref": "#/definitions/TriggerMapItemModelRegexCondition" },
+            { "type": "string" }
           ]
         },
         "pull_request_comment": {
           "oneOf": [
-            {"$ref": "#/definitions/TriggerMapItemModelRegexCondition"},
-            {"type": "string"}
+            { "$ref": "#/definitions/TriggerMapItemModelRegexCondition" },
+            { "type": "string" }
           ]
         },
 
         "tag": {
           "oneOf": [
-            {"$ref": "#/definitions/TriggerMapItemModelRegexCondition"},
-            {"type": "string"}
+            { "$ref": "#/definitions/TriggerMapItemModelRegexCondition" },
+            { "type": "string" }
           ]
         },
 
@@ -493,6 +767,34 @@
         },
         "is_pull_request_allowed": {
           "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "WithModel": {
+      "required": ["steps"],
+      "properties": {
+        "container": {
+          "type": "string"
+        },
+        "services": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "steps": {
+          "items": {
+            "patternProperties": {
+              "^(?!bundle::)(?!with$).*": {
+                "$ref": "#/definitions/StepModel"
+              }
+            },
+            "additionalProperties": false,
+            "type": "object"
+          },
+          "type": "array"
         }
       },
       "additionalProperties": false,
@@ -518,6 +820,12 @@
         "description": {
           "type": "string"
         },
+        "triggers": {
+          "$ref": "#/definitions/TriggersModel"
+        },
+        "status_report_name": {
+          "$ref": "#/definitions/StatusReportNameModel"
+        },
         "before_run": {
           "items": {
             "type": "string"
@@ -531,26 +839,28 @@
           "type": "array"
         },
         "envs": {
-          "items": {
-            "patternProperties": {
-              ".*": {
-                "additionalProperties": true
-              }
-            },
-            "type": "object"
-          },
-          "type": "array"
+          "$ref": "#/definitions/EnvModel"
         },
         "steps": {
           "items": {
             "patternProperties": {
-              ".*": {
+              "^bundle::.+": {
+                "$ref": "#/definitions/StepBundleOverrideModel"
+              },
+              "^with$": {
+                "$ref": "#/definitions/WithModel"
+              },
+              "^(?!bundle::)(?!with$).*": {
                 "$ref": "#/definitions/StepModel"
               }
             },
+            "additionalProperties": false,
             "type": "object"
           },
           "type": "array"
+        },
+        "priority": {
+          "$ref": "#/definitions/PriorityModel"
         },
         "meta": {
           "patternProperties": {
@@ -563,6 +873,91 @@
       },
       "additionalProperties": false,
       "type": "object"
+    },
+    "StepBundleModel": {
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "envs": {
+          "$ref": "#/definitions/EnvModel"
+        },
+        "inputs": {
+          "$ref": "#/definitions/EnvModel"
+        },
+        "steps": {
+          "items": {
+            "patternProperties": {
+              "^bundle::.+": {
+                "$ref": "#/definitions/StepBundleOverrideModel"
+              },
+              "^(?!bundle::)(?!with$).*": {
+                "$ref": "#/definitions/StepModel"
+              }
+            },
+            "additionalProperties": false,
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "StepBundleOverrideModel": {
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "envs": {
+          "$ref": "#/definitions/EnvModel"
+        },
+        "inputs": {
+          "$ref": "#/definitions/EnvModel"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "IncludeItemModel": {
+      "required": ["path"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "repository": {
+          "type": "string"
+        },
+        "branch": {
+          "type": "string"
+        },
+        "commit": {
+          "type": "string"
+        },
+        "tag": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "PriorityModel": {
+      "type": "integer",
+      "maximum": 100,
+      "minimum": -100
     }
   }
 }

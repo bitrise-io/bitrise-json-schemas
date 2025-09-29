@@ -76,11 +76,15 @@
           "ios",
           "macos",
           "android",
-          "xamarin",
           "react-native",
           "cordova",
           "ionic",
-          "flutter"
+          "flutter",
+          "kotlin-multiplatform",
+          "node-js",
+          "java",
+          "web",
+          "other"
         ]
       }
     },

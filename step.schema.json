@@ -82,7 +82,10 @@
           "ionic",
           "flutter",
           "kotlin-multiplatform",
-          "nodejs"
+          "node-js",
+          "java",
+          "web",
+          "other"
         ]
       }
     },

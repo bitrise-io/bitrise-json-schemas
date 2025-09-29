@@ -80,7 +80,9 @@
           "react-native",
           "cordova",
           "ionic",
-          "flutter"
+          "flutter",
+          "kotlin-multiplatform",
+          "nodejs"
         ]
       }
     },

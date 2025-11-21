@@ -148,6 +148,9 @@
       "items": {
         "$ref": "#/definitions/OutputEnvVar"
       }
+    },
+    "executables": {
+      "$ref": "#/definitions/ExecutablesModel"
     }
   },
   "definitions": {
@@ -447,6 +450,20 @@
         },
         "go": {
           "$ref": "#/definitions/GoStepToolkitModel"
+        }
+      }
+    },
+    "ExecutablesModel": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "storage_uri": {
+            "type": "string"
+          },
+          "hash": {
+            "type": "string"
+          }
         }
       }
     }

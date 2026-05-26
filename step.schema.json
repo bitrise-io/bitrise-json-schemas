@@ -97,14 +97,15 @@
         "enum": [
           "access-control",
           "artifact-info",
-          "installer",
-          "deploy",
-          "utility",
-          "dependency",
-          "code-sign",
           "build",
-          "test",
+          "code-sign",
+          "dependency",
+          "deploy",
+          "installer",
           "notification"
+          "utility",
+          "security",
+          "test"
         ]
       }
     },

@@ -2,6 +2,12 @@
 format_version: "11"
 default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 
+meta:
+  bitrise.io:
+    stack: ubuntu-noble-24.04-bitrise-2025-android
+    machine_type_id: standard
+
+
 workflows:
   test:
     steps:

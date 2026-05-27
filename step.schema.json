@@ -102,7 +102,7 @@
           "dependency",
           "deploy",
           "installer",
-          "notification"
+          "notification",
           "utility",
           "security",
           "test"

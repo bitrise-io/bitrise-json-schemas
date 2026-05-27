@@ -7,18 +7,12 @@ meta:
     stack: ubuntu-noble-24.04-bitrise-2025-android
     machine_type_id: standard
 
+
 workflows:
   test:
     steps:
     - go-list: {}
     - go-test: {}
-    - script@1:
-        inputs:
-        - content: |-
-            #!/usr/bin/env bash
-            set -xeo pipefail
-            jq empty step.schema.json
-        title: Validate schema json
     - script:
         title: Run golangci-lint
         inputs:

@@ -103,9 +103,9 @@
           "deploy",
           "installer",
           "notification",
-          "utility",
           "security",
-          "test"
+          "test",
+          "utility"
         ]
       }
     },

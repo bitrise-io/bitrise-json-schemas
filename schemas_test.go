@@ -194,7 +194,7 @@ type_tags:
 - utility
 - invalid
 `,
-		wantErr: `I[#/type_tags/1] S[#/properties/type_tags/items/enum] value must be one of "access-control", "artifact-info", "build", "code-sign", "dependency", "deploy", "installer", "notification", "security", "test", "utility",`,
+		wantErr: `I[#/type_tags/1] S[#/properties/type_tags/items/enum] value must be one of "access-control", "artifact-info", "build", "code-sign", "dependency", "deploy", "installer", "notification", "security", "test", "utility"`,
 	},
 	{
 		name: "is always run is set if notification type tag",

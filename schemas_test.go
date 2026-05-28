@@ -222,7 +222,7 @@ project_type_tags:
 - ios
 - unsupported
 `,
-		wantErr: `I[#/project_type_tags/1] S[#/properties/project_type_tags/items/enum] value must be one of "ios", "macos", "android", "xamarin", "react-native", "cordova", "ionic", "flutter"`,
+		wantErr: `I[#/project_type_tags/1] S[#/properties/project_type_tags/items/enum] value must be one of "ios", "macos", "android", "react-native", "cordova", "ionic", "flutter", "kotlin-multiplatform", "node-js", "java", "web", "other"`,
 	},
 	{
 		name: "timtout > 0",

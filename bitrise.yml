@@ -1,10 +1,17 @@
 # yaml-language-server: $schema=./bitrise.schema.json
 format_version: "11"
 default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
-
+project_type: other
+trigger_map:
+- push_branch: "*"
+  workflow: test
+- pull_request_source_branch: "*"
+  workflow: test
 workflows:
   test:
     steps:
+    - activate-ssh-key@4: {}
+    - git-clone@6: {}
     - go-list: {}
     - go-test: {}
     - script:
@@ -13,5 +20,9 @@ workflows:
         - content: |-
             #!/bin/env bash
             set -xeo pipefail
-            curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.55.2
-            golangci-lint run
+            curl -sSfL https://golangci-lint.run/install.sh | sh -s -- -b $(go env GOPATH)/bin v2.12.2
+            $(go env GOPATH)/bin/golangci-lint run
+meta:
+  bitrise.io:
+    machine_type_id: standard
+    stack: ubuntu-noble-24.04-bitrise-2025-android

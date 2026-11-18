@@ -37,7 +37,7 @@
         "properties": {
           "src": {
             "type": "string",
-            "pattern": "^https://bitrise-steplib-collection\\.s3\\.amazonaws\\.com/step-archives/$|^source/git$"
+            "pattern": "^https://steplib\\.bitrise\\.io/step-archives/$|^source/git$"
           },
           "type": {
             "type": "string",
@@ -48,7 +48,7 @@
     },
     "assets_download_base_uri": {
       "type": "string",
-      "pattern": "^https://bitrise-steplib-collection.s3.amazonaws.com/steps$"
+      "pattern": "^https://bitrise-steplib-collection\\.s3\\.amazonaws\\.com/steps$|^https://steplib\\.bitrise\\.io/api/v2/steps$"
     },
     "steps": {
       "type": "object",
@@ -84,11 +84,11 @@
                 "properties": {
                   "icon.svg": {
                     "type": "string",
-                    "pattern": "^https://bitrise-steplib-collection\\.s3\\.amazonaws\\.com/steps/.+/assets/icon\\.svg$"
+                    "pattern": "^https://(bitrise-steplib-collection\\.s3\\.amazonaws\\.com|steplib\\.bitrise\\.io/api/v2)/steps/.+/assets/icon\\.svg$"
                   },
                   "icon.png": {
                     "type": "string",
-                    "pattern": "^https://bitrise-steplib-collection\\.s3\\.amazonaws\\.com/steps/.+/assets/icon\\.png$"
+                    "pattern": "^https://(bitrise-steplib-collection\\.s3\\.amazonaws\\.com|steplib\\.bitrise\\.io/api/v2)/steps/.+/assets/icon\\.png$"
                   }
                 }
               },
@@ -174,11 +174,11 @@
                   "properties": {
                     "icon.svg": {
                       "type": "string",
-                      "pattern": "^https://bitrise-steplib-collection\\.s3\\.amazonaws\\.com/steps/.+/assets/icon\\.svg$"
+                      "pattern": "^https://(bitrise-steplib-collection\\.s3\\.amazonaws\\.com|steplib\\.bitrise\\.io/api/v2)/steps/.+/assets/icon\\.svg$"
                     },
                     "icon.png": {
                       "type": "string",
-                      "pattern": "^https://bitrise-steplib-collection\\.s3\\.amazonaws\\.com/steps/.+/assets/icon\\.png$"
+                      "pattern": "^https://(bitrise-steplib-collection\\.s3\\.amazonaws\\.com|steplib\\.bitrise\\.io/api/v2)/steps/.+/assets/icon\\.png$"
                     }
                   }
                 },
@@ -444,6 +444,20 @@
                             "type": "object"
                           }
                         }
+                      }
+                    }
+                  }
+                },
+                "executables": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object",
+                    "properties": {
+                      "storage_uri": {
+                        "type": "string"
+                      },
+                      "hash": {
+                        "type": "string"
                       }
                     }
                   }

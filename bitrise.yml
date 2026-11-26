@@ -3,7 +3,7 @@ format_version: "11"
 default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
 project_type: other
 trigger_map:
-- push_branch: "*"
+- push_branch: main
   workflow: test
 - pull_request_source_branch: "*"
   workflow: test
@@ -11,7 +11,7 @@ workflows:
   test:
     steps:
     - activate-ssh-key@4: {}
-    - git-clone@6: {}
+    - git-clone@8: {}
     - go-list: {}
     - go-test: {}
     - script:
@@ -25,4 +25,4 @@ workflows:
 meta:
   bitrise.io:
     machine_type_id: standard
-    stack: ubuntu-noble-24.04-bitrise-2025-android
+    stack: ubuntu-latest-stable

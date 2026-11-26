@@ -11,7 +11,7 @@ workflows:
   test:
     steps:
     - activate-ssh-key@4: {}
-    - git-clone@6: {}
+    - git-clone@8: {}
     - go-list: {}
     - go-test: {}
     - script:

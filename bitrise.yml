@@ -25,4 +25,4 @@ workflows:
 meta:
   bitrise.io:
     machine_type_id: standard
-    stack: ubuntu-noble-24.04-bitrise-2025-android
+    stack: ubuntu-latest-stable
